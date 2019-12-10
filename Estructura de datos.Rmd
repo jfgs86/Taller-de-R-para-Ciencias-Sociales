@@ -1,0 +1,281 @@
+---
+title: "Estructuras de datos."
+author: "Juan Francisco Gracia Sercado."
+date: "8/12/2019"
+output: html_document
+---
+
+# Tipos de Datos
+
+Tipos de datos | Información
+---------------|------------
+Lógico         | Son datos que sólo permite los valores lógicos de verdadero (T) o falso (F).
+Numérico       | Son datos que pueden contener números reales.
+Complejo       | Son datos que pueden contener números complejos.
+Carácter       | Son datos que permiten introducir número y cualquier tipo de carácter.
+
+
+
+#### Para asignar variables 
+
+```{r}
+w <- TRUE
+x <- 5
+y <- 4i
+z <- "Hola Mundo"
+```
+
+```{r, echo=TRUE}
+class(w)
+class(x)
+class(y)
+class(z)
+```
+
+
+#### Dentro de los tipos de datos numéricos tenemos:
+
+```{r}
+a1 <- 4 ## Entero
+a2 <- 5.3 ## Flotante
+a3 <- 4.33333333333333333 ## Flotante
+a4 <- pi ## Flotante
+a5 <- exp(1) ## Flotante
+```
+
+#### Como Calculadora
+
+Operación  |  
+-----------|-------------------
+5*10       |  Multiplicación
+5/2        |  División
+5%/%2      |  División entera. Devuelve la parte entera solamente
+10%%2      |  Módulo
+4^2        |  Potenciación
+sqrt(4)    |  Raíz cuadrada
+abs(-2.3)  |  Valor absoluto
+log(3)     |  Logaritmo neperiano de 3
+log(3,10)  |  Logaritmo base 10
+sin(pi/2)  |  Seno de $\frac{\pi}{2}$
+cos(0)     |  Cos de 0
+
+
+
+#### Objetos
+
+Objeto      | Información
+------------|-------------
+Vector      | Cadenas unidimensionales (es decir una sola columna o fila) de un tipo único de valores (numéricos, caracteres, etc.)
+Matrices    | Estructura bidimensional donde todos los datos deben ser del mismo tipo.
+Factores    | Este tipo de objeto es fundamental para el análisis estadístico pues es la forma como se tratan las variables categóricas.
+Listas      | Las listas son objetos genéricos que corresponden a colecciones de distintos objetos que pueden ser de tipos distintos.
+Data Frames | Como una matriz pero pudiendo contener distintos tipos de datos. Es lo que clásicamente se ha llamado base de datos o hoja de datos.
+
+
+## VECTORES
+
+```{r,echo=T}
+x <- c(0,1,2,3,4,5)
+class(x) ## Clase de datos que contiene el vector x
+length(x)
+```
+
+
+```{r, echo=T}
+x <- c("a","b","c","d","e")
+class(x)
+length(x)
+
+```
+
+```{r, echo=T}
+x <- c(T,F,T,F,T)
+class(x)
+length(x)
+```
+
+```{r, echo=T}
+x <- c(2, T, "a")
+class(x)
+```
+
+```{r, echo=T}
+x <- c(0,1,2,3,4,5)
+x[1] ## indicamos el valor del índice 1 de x
+x[3] ## indicamos el valor del índice 3 de x
+x[3:6] ## indicamos los valores de los índices de 3 a 6 
+x[6:3] ## indicamos los valores de los indices de 6 a 3 (modo inverso)
+```
+
+#### Se pueden crear secuencias de valores
+
+```{r, echo=T}
+x <- seq(from = 0,to = 9,by = 1)
+x
+x <- seq(from = 0,to = 100, by=5)
+x
+```
+
+#### Secuencia de valores repetidos
+
+```{r,echo=T}
+rep(x = 1:4,2)
+```
+
+## Operaciones con vectores
+
+La unica condición es que los vectores tengan la misma longitud.
+Las operaciones indice con índice.
+
+```{r, echo=T}
+x <- c(1,23,4,5)
+y <- c(3,4,6,7)
+
+x+y
+x-y
+x*y
+x/y
+x^y
+```
+
+Realiza operaciones Booleanas.
+```{r, echo=T}
+x <- c(T,F)
+y <- c(F,F)
+x+y
+x-y
+x*y
+x/y
+```
+
+## Matrices
+
+
+Parámetro      | Descripción
+---------------|-------------
+data           | Datos que forman la matriz. 
+nrow           | Número de Filas de la matriz.  
+ncol           | Número de Columnas de la matriz.
+byrow          | Los datos se colocan por filas o por columnas según se van leyendo. Por defecto se colocan por columnas.
+
+```{r, echo=T}
+x <- matrix(data = 1:9) ## matriz (filas,columnas)
+dim(x) ### dimensión de la matriz
+x <- matrix(data = 1:9,nrow =3 )
+x
+dim(x)
+x <- matrix(data = 1:9, ncol = 2)
+x
+dim(x)
+
+x <- matrix(data = 1:9, nrow = 2,ncol = 2) 
+```
+
+#### Algunas funciones sobre matrices
+
+Función   | Descripción
+----------|------------
+dim       | Devuelve las dimensiones de una matriz.
+dimnames  | Devuelve el nombre de las dimensiones de una matriz.
+colnames  | Devuelve el nombre de las columnas de una matriz.
+rownames  | Devuelve el nombre de las filas de una matriz.
+length    | Devuelve el número de elementos de una matriz.
+is.matrix | Devuelve TRUE si el objeto es una matriz, de lo contrario devuelve FALSE.
+[ , ]     | Accede al elemento de una matriz.
+apply     | Aplica una función sobre las filas o las columnas de una función.
+cbind     | Añade una columna a una matriz.
+rbind     | Añade una fila a una matriz.
+
+
+
+```{r, echo=T}
+x <- matrix(data = 1:9, nrow = 3)
+x
+dim(x)
+length(x)
+
+#Añadimos una columna de 1
+cbind(x,rep(0,3))
+rbind(x,rep(0,3))
+```
+
+
+La función dimnames funciona asignando a su argumento una lista de dos vectores de caracteres: los nombres de las filas y de las columnas de la matriz:
+
+```{r}
+x <- c(10,8,5)
+y <- c(8,7,9)
+z <- c(7,8,6)
+
+calificaciones <- cbind(x,y,z)
+calificaciones
+
+dimnames(calificaciones) <- list(c("Donovan","Mateo","Ovidio"),c ("Matemáticas","Español","Historia")) ## 
+calificaciones
+```
+
+
+
+
+
+
+## Listas
+
+Las listas sirven para concatenar objetos donde cada uno puede tener una estructura distinta. Esto no ocurre, por ejemplo, en los arrays, donde todos los elementos deben ser del mismo tipo (todos números, o todos carácter digamos).Una lista tiene una serie de componentes, a los que deberemos asignar un nombre. Para crear una lista podemos hacer algo como lo siguiente:
+
+
+```{r, echo=T}
+familia<-list(padre="Alexis",
+              madre="Ruby",
+              numero.hijos=3,
+              nombre.hijos=c("Axel","Dylan","Jennyfer"),
+               edades.hijos=c(7,5,3),ciudad="CDMX")
+familia
+
+names(familia)
+
+```
+
+Para acceder a componentes concretos se usa el operador $ seguido del nombre de la componente de la lista, o bien el número de la componente entre corchetes dobles [[]]:
+
+```{r,echo=T}
+familia$padre
+familia$madre
+familia$ciudad
+```
+
+## Data Frame
+
+Los data frames son una estructura de datos que generaliza a las matrices, en el sentido en que las columnas (variables a menudo) pueden ser de diferente tipo entre sí (no todas numéricas, por ejemplo). Sin embargo, todos los elementos de una misma columna deben ser del mismo tipo. Al igual que las filas y columnas de una matriz, todos los elementos de un data frame deben ser de la misma longitud. De este modo, pueden usarse funciones tales como dimnames, dim, nrow sobre un data frame como si se tratara de una matriz. Los datos de un data frame pueden ser accedidos como elementos de
+una matriz o de una lista. Para introducir los dataframes, partiremos de la matriz "datos", utilizada anteriormente:
+
+```{r, echo=T}
+x <- c(10,8,5)
+y <- c(8,7,9)
+z <- c(7,8,6)
+
+calificaciones <- cbind(x,y,z)
+calificaciones
+
+dimnames(calificaciones) <- list(c("Donovan","Mateo","Ovidio"),c ("Matemáticas","Español","Historia")) ## 
+calificaciones
+
+calificaciones <- as.data.frame(calificaciones)
+calificaciones
+
+```
+
+
+Podemos crear un data frame de la siguiente manera:
+
+```{r, echo=T}
+mi_df <- data.frame(
+  "entero" = 1:4, 
+  "factor" = c("a", "b", "c", "d"), 
+  "numero" = c(1.2, 3.4, 4.5, 5.6),
+  "cadena" = as.character(c("a", "b", "c", "d"))
+)
+
+mi_df
+```
+

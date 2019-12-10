@@ -1,0 +1,102 @@
+---
+title: "Sesión 1."
+author: "Juan Francisco Gracia Sercado."
+date: "8/12/2019"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+# RMarkdown
+
+Una excelente herramienta de trabajo es 'RMarkdown'. Este nos sirve para escribir informes reproducibles y dinámicos con R. Usalo para incluir código R y resultados en presentaciones, documentos pdf, html, Word y mas
+
+
+
+# Titulos1
+## Titulo 2
+### Titulo 3
+#### Titulo 4
+##### Titulo 5
+###### Titulo 6
+
+El tamaño del titulo lo determina el número de # (gatitos).
+
+
+Cada parrafo se termina con dos espacios de linea
+
+Letras cursivas *letras cursivas* o también _letras cursivas_
+
+Letras en negro **letras en negro** o también __letras en negro__
+
+raya guión corto : -
+
+raya guión largo : --
+
+elipsis : ...
+
+Las ecuaciiones tienen estructura de LaTeX.
+
+Ecuación1 : $A(x) = \alpha + \beta + \gamma$
+
+Ecuación2 : $B(x) = \frac{1}{2}x+3$
+
+Ecuación3 : $C_{x} = x^2+ \pi$
+
+Imagen : ![](/home/jfractal/Documentos/Taller_R_Ciencias_Sociales/codigos/Intro_RMarkdown/uacm.jpg)
+
+<img src="uacm.jpg" alt="uacm" width="200"/>
+
+<img src="uacm.jpg" alt="uacm" width="100"/>
+
+Indexar página web [Rstudio](https://rstudio.com/)
+
+
+Para poner linea de bloque usamos tres *
+
+***
+
+Listas
+
+* Lista sin orden
+* Elemento 2
+  +sub-elemento 1
+  *sub-elemento 2
+
+1. Lista con orden
+2. Elemento 2
+  +sub-elemento 1
+  *sub-elemento 2
+  
+Encabezado Tabla | Segundo Encabezado
+-----------------|--------------------
+celda 1          | celda 2
+celda 3          | celda 4
+
+
+
+## Incluye código 
+
+Usa sintaxis de knitr para incluir código R en tu informe. R correrá el código e incluirá los resultados cuando generas el documento.
+
+```{r,eval=TRUE}
+vector <- c(0,0.1,"a")
+
+```
+
+```{r, echo=TRUE}
+vector <- c(1,0.45,"hola mundo")
+```
+
+Opción  | Defecto   | Efecto
+--------|-----------|-------
+eval    | TRUE      | Indica si se va a evaluar el código e incluir los resultados
+echo    | TRUE      | Indica si se muestra el código a la par de los resultados 
+warnig  | TRUE      | Indica si se muestran advertencias
+error   | FALSE     | Indica si se muestran errores
+message | TRUE      | Indica si se muestran mensajes
+tidy    | FALSE     | Indica si se muestra código de forma organizada
+
+
+
+
