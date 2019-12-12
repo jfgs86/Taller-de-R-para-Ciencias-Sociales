@@ -1,0 +1,227 @@
+---
+title: "Introducción al análisis de datos con R"
+author: "Juan Francisco Gracia Sercado."
+date: "10/12/2019"
+output: html_document
+---
+
+# Objetivo
+
+Comprender las funciones básicas de *R* para realizar análisis de datos.
+
+# Datos a utilizar
+
+Se utilizarán los datos de *incidentes víales captados por C5*. Estos datos se pueden descargar en [https://datos.cdmx.gob.mx/explore/](https://datos.cdmx.gob.mx/explore/).
+
+# Pasos a seguir
+
+1- Limpieza de datos : Quitar valores *NA* .
+
+2- Sacar frecuencias de los datos.
+
+3- Graficar 
+
+# Limpieza de datos.
+
+Primero importamos nuestro datos. Para ello utililizo la función **fread** que es parte de la librería **data.table**. La función **fread** se utiliza principalmente para descargar dados extención *.CSV*.
+
+
+
+```{r, eval=T}
+library(readr)
+```
+
+Damos la instrucción para importar los datos
+```{r}
+df <- read.csv("/home/jfractal/Documentos/Taller_R_Ciencias_Sociales/bases/incidentes-viales-c5 (1).csv", encoding = "UTF-8")
+```
+
+Lo que ponemos entre comillas es la ruta y el nombre de nuestro archivo. Recordemos que se deben de cambiar los **\** por **/** y siempre poner la extensión *.csv* al final del nombre del documento, por ejemplo en nuestro caso en **"/home/jfractal/Documentos/Taller_R_Ciencias_Sociales/bases"** es donde se ecuentra nuestro archivo **"incidentes-viales-c5 (1).csv"**. 
+
+Visulizamos los primeros 6 datos y los últimos 6 datos
+
+```{r}
+head(df) ## MUESTRA LOS PRIMEROS 6 DATOS.
+tail(df)  ##MUESTRA LOS ÚLTIMOS 6 DATOS.)
+```
+
+Ahora checamos cuantos valores **NA** contiene la base de datos. Para ello mandamos a llamar a la libreria **tidyverse**. Esta nos sirve para el manejo y graficación de datos ya que tiene incluida a la libreria **ggplot**.
+
+```{r, eval=T}
+library(tidyverse)
+```
+
+Para contar los **NA** por columna
+
+```{r}
+sapply(df, function(x) sum(is.na(x)))
+```
+
+Como observamos ninguna columna tiene **NA**. Si hubiese sido lo contrario utilizamos la siguiente instrucción.
+```{r, eval=F}
+df<-df[!is.na(df$folio),] 
+```
+
+
+La instrucción es la siguiente: supongamos que el la fila folio tenemos valores **NA**. Entonces
+
+**de la variable df eliminame todas las filas que contengan valores** **NA**.  **df <- df[filas,columnas]**. Utilizo el mismo nombre de la variable de esta forma no nos llenamos de variables. jejeee!!!
+
+# Calcumos frecuencias de variables categóricas.
+
+Para calcular frecuencias utilizamos la función **table** y convertimos esos datos en un **dataframe** con la función **as.data.frame**.
+Primero comenzamos checando las variables, es decir, que clase de datos son, para ello utilizamos la función **glimpse**.
+
+```{r}
+glimpse(df)
+```
+
+Comenzamos calculando la frecuencia de **día_semana**.
+
+```{r}
+dia.sem.frec <- as.data.frame(table(df$dia_semana))
+```
+
+El nombre de las variables de dia.sem.frec son Var1 y Freq. Estos se pueden cambiar con la siguiente intrucción.
+```{r}
+colnames(dia.sem.frec)[1] <- "Dia de la semana"
+colnames(dia.sem.frec)[2] <- "Frecuencia"
+```
+
+
+
+
+Si queremos organizar la información de menos a mayor o de mayor a menos usamos la función **arrange**.
+
+```{r}
+dia.sem.frec <- arrange(dia.sem.frec, Frecuencia) ### Ordena de menor a mayor
+```
+
+```{r}
+dia.sem.frec <- arrange(dia.sem.frec, desc(Frecuencia)) ### Ordena de mayor a menor
+```
+
+La función **mutate** sirve para crear nueva variables. Creamos la variable **Porcentaje** y lo calculamos.
+
+```{r}
+dia.sem.frec <- mutate(dia.sem.frec, Porcentaje=round((Frecuencia*100)/sum(dia.sem.frec$Frecuencia),digits = 2))
+```
+
+$Porcetaje = \frac{x*100}{Total}$
+
+La función **sum** suma todos los valores de una columna, en nuestro caso sumo todos los valores de la variable Frecuencia.
+
+Calculamos las frecuencias y porcentajes de las varibales: **"delegacion_inicio"**, **"incidente_c4"** y **"tipo_entrada"**
+
+Comenzamos con la variable **delegacion_inicio**:
+```{r}
+del.inicio.frec <- as.data.frame(table(df$delegacion_inicio))
+colnames(del.inicio.frec)[1]<- "Alcaldia"
+colnames(del.inicio.frec)[2]<- "Frecuencia"
+del.inicio.frec <- mutate(del.inicio.frec, Porcentaje=round((Frecuencia*100)/sum(del.inicio.frec$Frecuencia), digits = 2))
+```
+
+Podemos ver que se tiene una fila sin **"nombre"**. Esta se elimina de la siguiente manera
+
+```{r}
+del.inicio.frec <- del.inicio.frec[-1,]
+del.inicio.frec <- arrange(del.inicio.frec, desc(Frecuencia))
+```
+La instrucción es: de los datos **del.inicio.frec** elimina la fila uno **[-1, ]** 
+
+y calculamos de nuevo los porcentajes
+
+
+```{r}
+del.inicio.frec <- mutate(del.inicio.frec, Porcentaje=round((Frecuencia*100)/sum(del.inicio.frec$Frecuencia), digits = 2))
+```
+   
+Ahora calculamos la frecuencia y porcentaje de la variable **incidente_c4**:
+
+```{r}
+inc.c4.frec <- as.data.frame(table(df$incidente_c4))
+colnames(inc.c4.frec)[1]<- "Alcaldia"
+colnames(inc.c4.frec)[2]<- "Frecuencia"
+inc.c4.frec <- mutate(inc.c4.frec, Porcentaje=round((Frecuencia*100)/sum(inc.c4.frec$Frecuencia), digits = 2))
+inc.c4.frec <- arrange(inc.c4.frec, desc(Frecuencia))
+```
+
+Ahora calculamos la frecuencia y porcentaje de la variable **tipo_entrada**:
+
+```{r}
+tipo.entrada.frec <- as.data.frame(table(df$tipo_entrada))
+colnames(tipo.entrada.frec)[1]<- "Tipo entrada"
+colnames(tipo.entrada.frec)[2]<- "Frecuencia"
+tipo.entrada.frec <- mutate(tipo.entrada.frec, Porcentaje=round((Frecuencia*100)/sum(tipo.entrada.frec$Frecuencia), digits = 2))
+tipo.entrada.frec <- arrange(tipo.entrada.frec, desc(Frecuencia))
+```
+
+
+
+
+## Datos de fecha y hora
+
+
+```{r}
+library(chron)
+```
+
+```{r}
+fecha_hora <- as.data.frame(df[,c(2,3)])
+nueva2 <- do.call( rbind , strsplit( as.character(df$fecha_creacion) , " " ))
+fecha <- as.data.frame(nueva2)
+colnames(fecha)[1] <- "Fecha"
+fecha$Fecha <- as.character(fecha$Fecha)
+fecha$Fecha <- as.Date(fecha$Fecha, tryFormat ="%d/%m/%Y")
+fecha$año <- years(fecha$Fecha)
+fecha$mes <- months(fecha$Fecha)
+fecha$dia <- days(fecha$Fecha)
+fecha$Mes<-format(fecha$Fecha,"%b")
+```
+
+
+
+Calculamos las frecuencias y porcentajes de las varibles de **Mes** y de **día**.
+
+
+```{r}
+mes.frec <- as.data.frame(table(fecha$Mes))
+colnames(mes.frec)[1]<- "Mes"
+colnames(mes.frec)[2]<- "Frecuencia"
+mes.frec <- arrange(mes.frec, desc(Frecuencia))
+mes.frec <- mutate(mes.frec, Porcentaje=round((Frecuencia*100)/sum(Frecuencia), digits = 4 ))
+```
+
+
+
+```{r}
+dia.frec <- as.data.frame(table(fecha$dia))
+colnames(dia.frec)[1]<- "Dia"
+colnames(dia.frec)[2]<- "Frecuencia"
+dia.frec <- arrange(dia.frec , Dia)
+dia.frec <- mutate(dia.frec, Porcentaje=round((Frecuencia*100)/sum(Frecuencia), digits = 4 ))
+```
+
+```{r}
+dia.frec$TC <- as.numeric(0)
+for (i in 2:31) {
+  dia.frec$TC[i]<- round(((dia.frec$Frecuencia[i]/dia.frec$Frecuencia[i-1])-1)*100, digits = 4)
+  
+}
+```
+
+# Exportar Datos a formato .csv
+
+Para exportar datos en formato .csv, primero debemos de especificar en que carpeta o lugar de nuestros archivos los queremos guardar, para eso utilizamos la función **setwd**.
+
+
+
+```{r}
+write.csv(dia.sem.frec, "dia semana.cvs")
+write.csv(del.inicio.frec, "alcaldia.csv")
+write.csv(inc.c4.frec, "incidente c4.csv")
+write.csv(dia.frec,"dia semana.csv")
+write.csv(mes.frec, "mes.csv")
+
+```
+

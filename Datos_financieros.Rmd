@@ -1,0 +1,95 @@
+---
+title: "Datos Financieros"
+author: "Juan Francisco Gracia Sercado."
+date: "9/12/2019"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Objetivo
+
+Utilizar datos financieros  de _**yahoo**_ 
+
+## Librerias a utilizar
+
+1.- [quantmod](https://cran.r-project.org/web/packages/quantmod/quantmod.pdf) que es un paquete de R diseñado para asistir a los operadores cuantitativos (quantitative traders) en el desarrollo, pruebas y despliegue de modelos de trading basados en las estadísticas.
+
+2.- [highcharter](http://jkunst.com/highcharter/index.html)  es un contenedor R para **Highcharts javascript libray** y sus módulos. Es una biblioteca de gráficos javascript muy madura y flexible y tiene una API 1 excelente y poderosa .
+
+## Datos _**finance-yahoo**_
+
+Entramos a la pagina [https://finance.yahoo.com/](https://finance.yahoo.com/) y seleccionamos [technology](https://finance.yahoo.com/sector/ms_technology), le damos click a las acciones de Apple.inc.
+
+## Código para trabajar con datos _**finance yahoo**_
+
+#### Librerias
+
+```{r, include=T}
+library(quantmod)
+library(highcharter)
+
+
+```
+
+### Cargamos los datos de _*finance yahoo*_
+
+```{r, include=T}
+AAPL <- getSymbols("AAPL", src = "yahoo", from = "2015-12-9", to = "2019-12-9", auto.assign = F)
+
+
+```
+### Mostramos los primeros 10 datos
+
+```{r AAPL, echo=T}
+knitr::kable(
+  AAPL[1:10, ],
+  caption = "Datos de Apple.inc."
+)
+
+```
+
+## Gráficas
+
+Utilizamos las fucniones que vienen integradas en R y las funciones de las librerias *quantmod* y *highcharter*.
+
+### Gráficas con la función plot.
+
+```{r, echo = FALSE}
+plot(AAPL, col = "red")
+```
+
+### Gráficas con la libreria *quantmod*
+
+```{r}
+
+AAPL.ohlc <-as.quantmod.OHLC(AAPL,col.names=c("Open","High","Low","Close","Volume","Adjust"))
+AAPL.ohlc[c(1:3,nrow(AAPL.ohlc)),]
+
+
+
+chartSeries(AAPL.ohlc, name = "AAPL OHLC")
+# Creación de objeto con los precios de cierre
+AAPL.Close <- AAPL$AAPL.Close
+
+# Gráfico de línea
+barChart(AAPL.Close,theme="black",bar.type="l",subset="2017-05::2017")
+
+# Gráfico de barra
+barChart(AAPL,theme="black",bar.type="hlc",subset="2017-05::2017")
+
+# Gráfico de velas
+barChart(AAPL, theme = "white", up.col = "green",dn.col = "red" ,color.vol = TRUE, multi.col = FALSE)
+```
+
+
+## GRAFICOS CON *HIGHCHARTER*
+```{r}
+hchart(AAPL)
+```
+
+
+
