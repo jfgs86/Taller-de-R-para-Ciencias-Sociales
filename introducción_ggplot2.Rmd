@@ -1,0 +1,212 @@
+---
+title: "Gráficas con ggplot2"
+author: "Juan Francisco Gracia Sercado."
+date: "11/12/2019"
+output: html_document
+---
+
+# Introducción
+
+R tiene una inmensa capacidad de graficar y visualizar datos de todo tipo, incluídos datos genéticos. 
+
+Las gráficas pueden hacerse desde la base de R (`base`) o con paquetes especializados en graficar, como `lattice`, o más recientemente `ggplot2` y `ggbio`. También paquetes especializados en un tipo de datos que incluyen funciones para graficar, como `ape` para árboles filogenéticos. 
+
+
+
+**Una de las mejores formas de aprender a hacer gráficas en R es buscar en internet/libro una gráfica parecida a la que queremos hacer y ver el código**. Algunas recomendaciones:
+
+* Sección IV de Adler, J. (2012) _R in a Nutshell_ O'Reilly. 
+* [R Graph Gallery](http://www.r-graph-gallery.com/)
+* [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/) 
+* [Blog de phytools](http://blog.phytools.org/)
+* [Making maps with R en The Molecular Ecologist](http://www.molecularecologist.com/2012/09/making-maps-with-r/)
+* [Documentación online de ggplot2](http://docs.ggplot2.org/current/)
+* [Documentación online de ggbio](http://www.tengfei.name/ggbio/docs/)
+
+# Objetivo
+
+Aprender a gráficar con la **libreria ggplot2**
+
+
+
+# Librerias a utilizar
+
+Utilizaremos 
+
+```{r}
+library(readr) ## PARA IMPORTAR ARCHIVOS CON EXTENCIÓN .csv
+library(tidyverse) ## CONTIENE UNA COLECCION DE PAQUETERIAS PARA EL ANÁLISIS DE DATOS
+```
+
+# Datos a graficar 
+
+Vamos a utilizar los siguientes datos:
+
+```{r}
+alcaldia <- read.csv("/home/jfractal/Documentos/Taller_R_Ciencias_Sociales/codigos/Estructura de datos/alcaldia.csv")
+
+dia.semana <- read.csv("/home/jfractal/Documentos/Taller_R_Ciencias_Sociales/codigos/Estructura de datos/dia semana.csv")
+  
+dia.mes <- read.csv("/home/jfractal/Documentos/Taller_R_Ciencias_Sociales/codigos/Estructura de datos/dia del mes.csv")
+
+mes <- read.csv("/home/jfractal/Documentos/Taller_R_Ciencias_Sociales/codigos/Estructura de datos/mes.csv")
+
+incidenteC4 <- read.csv("/home/jfractal/Documentos/Taller_R_Ciencias_Sociales/codigos/Estructura de datos/incidente c4.csv")
+
+tipo.entrada <- read.csv("/home/jfractal/Documentos/Taller_R_Ciencias_Sociales/codigos/Estructura de datos/tipo de entrada.csv")
+```
+
+
+
+# Tipos de Gráficas
+
+## Gráfico de lineas
+
+Explicaremos el codigo:
+
+Comenzamos por abrir la ventana de ggplot. Esto es con la función **ggplot()**. En esta ventana se plasmara nuestro gráfico.
+
+```{r}
+ggplot()
+```
+
+Ahora le metemos los parámetros para graficar la tasa de crecimiento día del mes.
+
+```{r}
+ggplot(dia.mes, aes(x = dia.mes$Dia, y = dia.mes$TC))+
+  geom_line(color = "blue")+
+  geom_point(color="red")+
+  scale_x_continuous(breaks = seq(1,31,1))+
+  xlab("DIA")+
+  ylab("Tasa de Crecimiento (%)")+
+  theme_minimal()+
+  theme(text = element_text(size=15))+
+   labs(title = "Tasa de Crecimiento de incidentes viales.\nDía de Mes. (%).",
+       subtitle = "2019*",
+       caption = "Los datos del 2019 son hasta diciembre.\nFuente:Calculos con base en datos\nhttps://datos.cdmx.gob.mx/explore/dataset/incidentes-viales-c5/table/?disjunctive.incidente_c4")
+
+  
+  
+  
+```
+
+
+## Gráficas de barras.
+
+Gráficamos los valores de **alcaldias**
+
+
+```{r}
+
+ggplot(alcaldia, aes(x = alcaldia$Alcaldia, y = alcaldia$Porcentaje))+
+  geom_bar(stat="identity",color="black",fill="green")+
+  ylab("Porcentaje")+
+  xlab("")+
+  geom_text(aes(label=stringr::str_wrap(Porcentaje, 10)), vjust=0.01, color="black", size=4.0)+
+  theme_test()+
+  theme(text = element_text(size=6.5),axis.text.x = element_text(angle = 45, hjust = 1))+
+  labs(title = "Incidentes Viales.\nDía de la semana. (%).",
+       subtitle = "2019*",
+       caption = "Los datos del 2019 son hasta diciembre.\nFuente:Calculos con base en datos\nhttps://datos.cdmx.gob.mx/explore/dataset/incidentes-viales-c5/table/?disjunctive.incidente_c4")
+
+  
+  
+
+```
+
+
+
+```{r}
+
+ggplot(alcaldia, aes(x = alcaldia$Alcaldia, y = alcaldia$Porcentaje))+
+  geom_bar(stat="identity",color="black",fill="green")+
+  ylab("Porcentaje")+
+  xlab("")+
+  geom_text(aes(label=stringr::str_wrap(Porcentaje, 10)), vjust=0.01, color="black", size=4.0)+
+  coord_flip()+
+  theme_test()+
+  theme(text = element_text(size=6.5),axis.text.x = element_text(angle = 45, hjust = 1))+
+  labs(title = "Incidentes Viales.\nDía de la semana. (%).",
+       subtitle = "2019*",
+       caption = "Los datos del 2019 son hasta diciembre.\nFuente:Calculos con base en datos\nhttps://datos.cdmx.gob.mx/explore/dataset/incidentes-viales-c5/table/?disjunctive.incidente_c4")
+
+  
+  
+
+```
+
+
+
+
+
+
+
+## Gráficas de Pastel
+
+```{r}
+ggplot(tipo.entrada, aes(x = "", y=tipo.entrada$Porcentaje, fill = factor(tipo.entrada$Tipo.entrada))) + 
+  geom_bar(width = 1, stat = "identity") +
+  theme(axis.line = element_blank(), 
+        plot.title = element_text(hjust=0.5)) + 
+  coord_polar(theta = "y", start=0)+
+  labs(fill="Tipo de Entada", 
+       x=NULL, 
+       y=NULL, 
+       title="Tipo de entrada", 
+       caption="Fuente: mpg")
+
+```
+
+
+
+
+
+
+```{r}
+plantilla <- read.csv("/home/jfractal/Documentos/Taller_R_Ciencias_Sociales/codigos/Estructura de datos/plantilla_mes.csv")
+```
+
+
+```{r}
+mes$num <- as.numeric(0)
+for (i in 1:dim(mes)[1]) {
+  for (j in 1:dim(plantilla)[1]) {
+    if(mes$Mes[i] ==plantilla$MES[j] )
+      mes$num[i]<- plantilla$NUM[j]
+    
+  }
+  
+}
+```
+
+
+```{r}
+mes <- arrange(mes, mes$num)
+```
+
+
+```{r}
+nv<-c("ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic")
+```
+
+```{r}
+ggplot(mes, aes(factor(x = mes$Mes, levels = nv),y = mes$Porcentaje))+
+  geom_bar(position="dodge", stat="identity", color = "black", fill="red")+
+  xlab("")+
+  ylab("Porcentaje")+
+  theme(text = element_text(size=10))
+  
+```
+
+
+```{r}
+
+
+ggplot(mes, aes(x = mes$num, y = mes$Frecuencia, ))+
+  geom_line()+geom_point(color="red")+
+  scale_x_continuous(breaks = seq(1,31,1))
+  
+
+
+```
+
