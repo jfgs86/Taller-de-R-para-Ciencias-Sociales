@@ -1,0 +1,192 @@
+---
+title: "Sesión 1"
+author: "Juan Francisco Gracia Sercado."
+date: "18/11/2019"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+
+
+## Paso 1
+
+### Archivos **shp**
+
+(Para cobnocer sobre los archivos shape ingrese en (http://www.geogra.uah.es/gisweb/practica-vectorial/Formato_Shapefile.htm))
+
+1. Ingresamos a la página web https://datos.cdmx.gob.mx/pages/home/ .
+2. Damos click en **explorar datos** .
+3. Seleccionamos **Alcaldias**
+4. Seleccionamos **exportar datos** .
+5. Damos click en **Formatos de archivo geográfico** -> **Shapefile** .
+6. Guardamos en la carpeta **capas**
+
+
+# Mi primer mapa en R
+Abrimos el IDE **Rstudio**, damos click en **File** -> **New File** -> **R Script**
+
+## Paso 2. Librerias a utlizar
+
+```{r,eval=T}
+library(readr) 
+library(tidyverse)
+library(raster) 
+library(leaflet)
+```
+
+*data.table* : Agregación rápida de datos grandes (por ejemplo, 100 GB en RAM), uniones ordenadas rápidas, adición / modificación / eliminación rápida de columnas por grupo sin ninguna copia, listas de columnas, lectura / escritura amigable y rápida de valores separados por caracteres. Ofrece una sintaxis natural y flexible, para un desarrollo más rápido. Ver [data.table](https://cran.r-project.org/web/packages/data.table/index.html)
+
+*dplyr* : Es una gramática de manipulación de datos, que proporciona un conjunto consistente de verbos que lo ayudan a resolver los desafíos más comunes de manipulación de datos. Ver [dplyr](https://www.rdocumentation.org/packages/dplyr/versions/0.7.8)
+
+*raster* : Lectura, escritura, manipulación, análisis y modelado de datos espaciales cuadriculados. El paquete implementa funciones básicas y de alto nivel. Se admite el procesamiento de archivos muy grandes. También hay soporte para operaciones de datos vectoriales como las intersecciones. Ver [raster](https://cran.r-project.org/web/packages/raster/index.html)
+
+*leaflet* : Cree y personalice mapas interactivos utilizando la biblioteca JavaScript 'leafler' y el paquete 'htmlwidgets'. Estos mapas se pueden usar directamente desde la consola R, desde 'RStudio', en aplicaciones Shiny y documentos R Markdown.
+
+## Nota
+Si no tiene instalada alguna de las librerias dar la instrucción **install.package ("nombre de la libreria")**, v.g, **install.package("data.table")**
+
+
+## Paso 3. Ubicamos nuestro espacio de trabajo
+
+Seleccionamos la ruta donde se encuentra nuestra carpeta **mapas**
+```{r, eval=FALSE}
+setwd("/home/jfractal/Documentos/Taller_R_Ciencias_Sociales/codigos/Estructura de datos/")
+```
+
+## Paso 4. Introducimos los datos a trabajar
+
+Introducimos nuestra base en formato .csv
+```{r, eval=T}
+df <- read.csv("/home/jfractal/Documentos/Taller_R_Ciencias_Sociales/bases/incidentes-viales-c5 (1).csv")
+```
+
+Mostramos las variables de **df** y su tipo de clase.
+```{r, eval=T}
+str(df) 
+```
+
+Introducimos la base de capas que esta en formato .shp.
+
+```{r, eval=T}
+capas <- shapefile("/home/jfractal/Documentos/talleres/MAPAS R/mapas/capas/alcaldias/alcaldias.shp")
+```
+
+Mostramos las variables de **capas* y su tipo de clase.
+```{r, eval=T}
+str(capas)
+
+```
+
+## Paso 5. Generamos la ventana gráfica de leaflet
+```{r}
+leaflet()
+```
+
+## Paso 6. Agregar mosaicos de mapas de OpenStreetMap predeterminados
+```{r}
+leaflet()%>%
+  addTiles()
+    
+```
+## Paso 7. Agregamos unas coordenadas 
+
+```{r}
+leaflet()%>%
+  addTiles()%>%
+  setView(lng = -99.028858, lat = 19.394208, zoom = 12)
+  
+```
+
+## Paso 8. Función **addProvidertiles** (Mosaicos)
+
+Alternativamente, se pueden agregar muchos mapas base gratuitos de terceros utilizando la addProviderTiles()función, que se implementa utilizando el complemento de proveedores de leaflet . Ver aquí para el conjunto completo [http://leaflet-extras.github.io/leaflet-providers/preview/index.html](http://leaflet-extras.github.io/leaflet-providers/preview/index.html).
+
+
+```{r}
+leaflet()%>%
+  addProviderTiles(providers$Stamen.Toner)%>%
+  setView(lng = -99.028858, lat = 19.394208, zoom = 12)
+  
+```
+
+```{r}
+leaflet()%>%
+  addProviderTiles(providers$CartoDB.Positron)%>%
+  setView(lng = -99.028858, lat = 19.394208, zoom = 12)
+  
+```
+
+
+```{r}
+library(leaflet)
+leaflet()%>%
+  addProviderTiles(providers$Esri.NatGeoWorldMap)%>%
+  setView(lng = -99.028858, lat = 19.394208, zoom = 12)
+  
+```
+
+
+
+```{r}
+leaflet()%>%
+  addProviderTiles(providers$CartoDB.DarkMatter)%>%
+  setView(lng = -99.028858, lat = 19.394208, zoom = 12)
+  
+```
+
+
+
+Vamos a generar un mapa integrando capas. Para ello utilizaremos el archivo **alcaldias.shp** que se encuentra en nuestra carpeta **mapas** -> **alcaldias** .
+
+El tipo de archivo shape es de polígonos, es decir, son formas cerradas. 
+
+```{r}
+leaflet()%>%
+  addTiles()%>%
+  addPolygons(data = capas, 
+              stroke = T, color = "black", weight = 5, opacity = 3, fill = T, fillColor = "blue",
+              highlightOptions = highlightOptions(color = "red", weight = 4,
+                                 bringToFront = TRUE))
+```
+
+Si se quiere solo una parte (una alcaldía).
+
+Vamos a gráficar el polígono correspondiente a la alcaldía Gustavo A. Madero.
+
+```{r}
+AZC<-capas[capas$nomgeo=="Azcapotzalco",]
+
+leaflet()%>%
+  addProviderTiles(providers$Esri.WorldImagery)%>%
+  addPolygons(data = AZC, color = "red", opacity = 2)
+```
+
+## Nota
+
+El simbolo "$" se usa para asignar (filtrar) variables de un conjunto de datos.
+
+Por ejemplo GAM <- capas[capas$nomgeo == "Gustavo A. Madero"] la instrucción que estamos dando es que de los datos **"capas"** tome la variable **"nomgeo"** y selecciones la observación que se llama **"Azcapotzalco"**.
+
+
+
+## Marcadores, Cluster e información
+
+
+```{r}
+leaflet()%>%
+  addTiles()%>%
+  addPolygons(data = capas)%>%
+  addMarkers(data = df, lng = df$longitud, lat = df$latitud,clusterOptions = markerClusterOptions())
+```
+
+
+```{r}
+leaflet()%>%
+  addTiles()%>%
+  addPolygons(data = capas)%>%
+  addMarkers(data = df, lng = df$longitud, lat = df$latitud,clusterOptions = markerClusterOptions(), popup = df$incidente_c4)
+```
+
+
+
